@@ -144,7 +144,7 @@
         config
         );
 
-        function updateChartWithNewData(newData, removeDataCount = 5) {
+        function updateChartWithNewData(newData, removeDataCount = 0) {
         // Remove the old data
         if (removeDataCount > 0) {
             myChart.data.labels.splice(0, removeDataCount);
