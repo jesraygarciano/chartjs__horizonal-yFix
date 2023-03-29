@@ -144,7 +144,13 @@
         config
         );
 
-        function updateChartWithNewData(newData) {
+        function updateChartWithNewData(newData, removeDataCount = 5) {
+        // Remove the old data
+        if (removeDataCount > 0) {
+            myChart.data.labels.splice(0, removeDataCount);
+            myChart.data.datasets[0].data.splice(0, removeDataCount);
+        }
+
         // Update the chart data
         myChart.data.labels.push(...newData.map(() => 'New'));
         myChart.data.datasets[0].data.push(...newData);
@@ -230,7 +236,7 @@
 
     if (scrollPosition >= maxScroll) {
         const newData = generateNewData(7);
-        updateChartWithNewData(newData);
+        updateChartWithNewData(newData, 7);
     }
     });
 
