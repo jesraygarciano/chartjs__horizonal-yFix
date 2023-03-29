@@ -1,9 +1,11 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Getting Started with Chart JS Fixed Y Axis with www.chartjs3.com</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Getting Started with Chart JS Fixed Y Axis with www.chartjs3.com
+    </title>
     <style>
       * {
         margin: 0;
@@ -13,7 +15,7 @@
       .chartMenu {
         width: 100vw;
         height: 40px;
-        background: #1A1A1A;
+        background: #1a1a1a;
         color: rgba(54, 162, 235, 1);
       }
       .chartMenu p {
@@ -46,6 +48,7 @@
       .box {
         width: calc(700px - 35px);
         height: 500px;
+        position: relative
       }
     </style>
   </head>
@@ -56,194 +59,341 @@
     <div class="chartCard">
       <div class="chartBox">
         <div class="colSmall">
-            <canvas id="myChart2"></canvas>
+          <canvas id="myChart2"></canvas>
         </div>
         <div class="colLarge">
-            <div class="box">
-                <canvas id="myChart"></canvas>
-            </div>
+          <div class="box">
+            <canvas id="myChart"></canvas>
+          </div>
         </div>
+
+        <div id="custom-tooltip" style="display: none; position: absolute; background-color: white; border: 1px solid black; padding: 5px; z-index: 1000;"></div>
       </div>
     </div>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js"></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js"
+    ></script>
     <script>
-
-        function generateNewData(count) {
+      function generateNewData(count) {
         const newData = [];
         for (let i = 0; i < count; i++) {
-            newData.push(Math.floor(Math.random() * 20) + 1);
+          newData.push(Math.floor(Math.random() * 1000));
         }
         return newData;
-        }
+      }
 
-    // First CHART ================
-    // setup 
-    const data = {
-      labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-      datasets: [{
-        label: 'Weekly Sales',
-        data: [9, 12, 6, 9, 12, 3, 9, 18, 12, 6, 9, 12, 3, 9, 18, 12, 6, 9, 12, 3, 9, 18, 12, 6, 9, 12, 3, 9, 9, 12, 6, 9, 12, 3, 9, 18, 12, 6, 9, 12, 3, 9, 18, 12, 6, 9, 12, 3, 9, 18, 12, 6, 9, 12, 3, 9, 9, 12, 6, 9, 12, 3, 9, 18, 12, 6, 9, 12, 3, 9, 18, 12, 6, 9, 12, 3, 9, 18, 12, 6, 9, 12, 3, 9],
-        backgroundColor: [
-          'rgba(255, 26, 104, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(153, 102, 255, 0.2)',
-          'rgba(255, 159, 64, 0.2)',
-          'rgba(0, 0, 0, 0.2)'
-        ],
-        borderColor: [
-          'rgba(255, 26, 104, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)',
-          'rgba(0, 0, 0, 1)'
-        ],
-        borderWidth: 1
-      }]
-    };
+      const customTooltip = document.getElementById("custom-tooltip");
 
-    // config 
-    const config = {
-      type: 'bar',
-      data,
-      options: {
-        maintainAspectRatio: false,
-        layout: {
-            padding: {
-                top: 10,
-                bottom: 10,
-            }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: {
-                display: false
-            },
-            grid: {
-                drawTicks: false,
-                borderColor: 'rgba(255, 26, 104, 1)',
-                drawBorder: false,
-            }
-          }
-        },
-        plugins:{
-            legend: {
-                display: false
-            }
+      function handleHover(event, elements) {
+        if (elements.length > 0) {
+          const index = elements[0].index;
+          const datasetIndex = elements[0].datasetIndex;
+          const value = myChart.data.datasets[datasetIndex].data[index];
+          const label = myChart.data.labels[index];
+
+          customTooltip.style.display = "block";
+          customTooltip.style.left = `${event.clientX}px`;
+          customTooltip.style.top = `${event.clientY}px`;
+          customTooltip.innerHTML = `<p>${label}: ${value}</p>`;
+        } else {
+          customTooltip.style.display = "none";
         }
       }
-    };
 
-        // render init block
-        const myChart = new Chart(
-        document.getElementById('myChart'),
-        config
-        );
+      function handleClick(event, elements) {
+        if (elements.length > 0) {
+          const index = elements[0].index;
+          const value = elements[0].element.datasetIndex;
+          window.open(`sales-details.html?index=${index}&value=${value}`, "_blank");
+        }
+      }
 
-        function updateChartWithNewData(newData, removeDataCount = 0) {
+      // First CHART ================
+      // setup
+      const data = {
+        labels: [
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri",
+          "Sat",
+          "Sun",
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri",
+          "Sat",
+          "Sun",
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri",
+          "Sat",
+          "Sun",
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri",
+          "Sat",
+          "Sun",
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri",
+          "Sat",
+          "Sun",
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri",
+          "Sat",
+          "Sun",
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri",
+          "Sat",
+          "Sun",
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri",
+          "Sat",
+          "Sun",
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri",
+          "Sat",
+          "Sun",
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri",
+          "Sat",
+          "Sun",
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri",
+          "Sat",
+          "Sun",
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri",
+          "Sat",
+          "Sun",
+        ],
+        datasets: [
+          {
+            label: "Weekly Sales",
+            data: [
+              9, 99, 300, 800, 100, 3, 200, 723, 200, 200, 9, 12, 232, 9, 500, 12, 6, 9, 12,
+              3, 9, 18, 111, 6, 9, 12, 3, 9, 211, 12, 6, 9, 800, 300, 135, 180, 500, 600, 290,
+              12, 200, 2, 300, 12, 255, 900, 120, 300, 344, 182, 129, 623, 9, 200, 3, 9, 9, 12,
+              6, 9, 12, 3, 9, 233, 12, 6, 9, 12, 900, 9, 18, 12, 6, 9, 12, 3, 9,
+              18, 12, 6, 9, 12, 3, 9,
+            ],
+            backgroundColor: [
+              "rgba(255, 26, 104, 0.2)",
+              "rgba(54, 162, 235, 0.2)",
+              "rgba(255, 206, 86, 0.2)",
+              "rgba(75, 192, 192, 0.2)",
+              "rgba(153, 102, 255, 0.2)",
+              "rgba(255, 159, 64, 0.2)",
+              "rgba(0, 0, 0, 0.2)",
+            ],
+            borderColor: [
+              "rgba(255, 26, 104, 1)",
+              "rgba(54, 162, 235, 1)",
+              "rgba(255, 206, 86, 1)",
+              "rgba(75, 192, 192, 1)",
+              "rgba(153, 102, 255, 1)",
+              "rgba(255, 159, 64, 1)",
+              "rgba(0, 0, 0, 1)",
+            ],
+            borderWidth: 1,
+          },
+        ],
+      };
+
+      // config
+      const config = {
+        type: "bar",
+        data,
+        options: {
+          onClick: handleClick,
+          onHover: handleHover,
+          maintainAspectRatio: false,
+          layout: {
+            padding: {
+              top: 10,
+              bottom: 10,
+            },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                display: false,
+              },
+              grid: {
+                drawTicks: false,
+                borderColor: "rgba(255, 26, 104, 1)",
+                drawBorder: false,
+              },
+            },
+          },
+          plugins: {
+            legend: {
+              display: false,
+            },
+          },
+        },
+      };
+
+      // render init block
+      const myChart = new Chart(document.getElementById("myChart"), config);
+
+      function updateChartWithNewData(newData, removeDataCount = 0, leftDataCount = 0) {
         // Remove the old data
         if (removeDataCount > 0) {
-            myChart.data.labels.splice(0, removeDataCount);
-            myChart.data.datasets[0].data.splice(0, removeDataCount);
+          myChart.data.labels.splice(myChart.data.labels.length - removeDataCount, removeDataCount);
+          myChart.data.datasets[0].data.splice(myChart.data.datasets[0].data.length - removeDataCount, removeDataCount);
         }
 
         // Update the chart data
-        myChart.data.labels.push(...newData.map(() => 'New'));
-        myChart.data.datasets[0].data.push(...newData);
+        if (leftDataCount > 0) {
+          myChart.data.labels.unshift(...newData.map(() => "New"));
+          myChart.data.datasets[0].data.unshift(...newData);
+        } else {
+          myChart.data.labels.push(...newData.map(() => "New"));
+          myChart.data.datasets[0].data.push(...newData);
+        }
         myChart.update();
 
         // Update the chart container width
         const barLength = myChart.data.labels.length;
         if (barLength > 7) {
-            const chartWidth = 700 + ((barLength - 7) * 30);
-            box.style.width = `${chartWidth}px`
-        }
-        }
-
-    // END First CHART ==============
-
-
-    // SECOND CHART ==============
-    const data2 = {
-      labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-      datasets: [{
-        label: 'Weekly Sales',
-        data: myChart.data.datasets[0].data,
-      }]
-    };
-
-    // config 
-    const config2 = {
-      type: 'bar',
-      data: data2,
-      options: {
-        maintainAspectRatio: false,
-        layout: {
-            padding: {
-                bottom: 45,
-            }
-        },
-        scales: {
-          x: {
-            ticks: {
-                display: false
-            },
-            grid: {
-                drawTicks: false
-            }
-          },
-          y: {
-            beginAtZero: true,
-            afterFit: (ctx) => {
-                console.log("sample");
-                ctx.width = 35;
-            }
-          }
-        },
-        plugins:{
-            legend: {
-                display: false
-            }
+          const chartWidth = 700 + (barLength - 7) * 30;
+          box.style.width = `${chartWidth}px`;
         }
       }
-    };
-
-    // render init block
-    const myChart2 = new Chart(
-      document.getElementById('myChart2'),
-      config2
-    );
-
-    const box = document.querySelector('.box');
-    const barLength = myChart.data.labels.length;
-    console.log(barLength);
-
-    if (barLength > 7) {
-        const chartWidth = 700 + ((barLength - 7) * 30);
-        box.style.width = `${chartWidth}px`
-    }
 
 
-    const colLarge = document.querySelector('.colLarge');
+      // END First CHART ==============
 
-    colLarge.addEventListener('scroll', (event) => {
-    const scrollPosition = colLarge.scrollLeft + colLarge.clientWidth;
-    const maxScroll = colLarge.scrollWidth;
+      // SECOND CHART ==============
+      const data2 = {
+        labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+        datasets: [
+          {
+            label: "Weekly Sales",
+            data: myChart.data.datasets[0].data,
+          },
+        ],
+      };
 
-    if (scrollPosition >= maxScroll) {
-        const newData = generateNewData(7);
-        updateChartWithNewData(newData, 7);
-    }
-    });
+      // config
+      const config2 = {
+        type: "bar",
+        data: data2,
+        options: {
+          maintainAspectRatio: false,
+          layout: {
+            padding: {
+              bottom: 45,
+            },
+          },
+          scales: {
+            x: {
+              ticks: {
+                display: false,
+              },
+              grid: {
+                drawTicks: false,
+              },
+            },
+            y: {
+              beginAtZero: true,
+              afterFit: (ctx) => {
+                console.log("sample");
+                ctx.width = 35;
+              },
+            },
+          },
+          plugins: {
+            legend: {
+              display: false,
+            },
+          },
+        },
+      };
 
-    // Instantly assign Chart.js version
-    const chartVersion = document.getElementById('chartVersion');
-    chartVersion.innerText = Chart.version;
+      // render init block
+      const myChart2 = new Chart(document.getElementById("myChart2"), config2);
+
+      const box = document.querySelector(".box");
+      const barLength = myChart.data.labels.length;
+      console.log(barLength);
+
+      if (barLength > 7) {
+        const chartWidth = 700 + (barLength - 7) * 30;
+        box.style.width = `${chartWidth}px`;
+      }
+
+      const colLarge = document.querySelector(".colLarge");
+
+      colLarge.addEventListener("scroll", (event) => {
+        const scrollPosition = colLarge.scrollLeft + colLarge.clientWidth;
+        const maxScroll = colLarge.scrollWidth;
+
+        if (scrollPosition >= maxScroll) {
+          const newData = generateNewData(30);
+          updateChartWithNewData(newData, 30);
+        }
+
+        if (colLarge.scrollLeft === 0) {
+          const newData = generateNewData(30);
+          updateChartWithNewData(newData, 0, 30);
+        }
+      });
+
+
+      //Tooltip event listener
+      customTooltip.addEventListener("click", function (event) {
+        // Add your custom click action here.
+        alert("Custom tooltip clicked!");
+      });
+
+
+      //Center Sroll position
+      function centerScrollPosition() {
+        const colLarge = document.querySelector(".colLarge");
+        const maxScroll = colLarge.scrollWidth;
+        const centerScroll = (maxScroll - colLarge.clientWidth) / 2;
+        colLarge.scrollLeft = centerScroll;
+      }
+
+      // Instantly assign Chart.js version
+      const chartVersion = document.getElementById("chartVersion");
+      chartVersion.innerText = Chart.version;
+
+      centerScrollPosition();
     </script>
-
   </body>
 </html>
