@@ -67,6 +67,15 @@
     </div>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js"></script>
     <script>
+
+        function generateNewData(count) {
+        const newData = [];
+        for (let i = 0; i < count; i++) {
+            newData.push(Math.floor(Math.random() * 20) + 1);
+        }
+        return newData;
+        }
+
     // First CHART ================
     // setup 
     const data = {
@@ -129,11 +138,26 @@
       }
     };
 
-    // render init block
-    const myChart = new Chart(
-      document.getElementById('myChart'),
-      config
-    );
+        // render init block
+        const myChart = new Chart(
+        document.getElementById('myChart'),
+        config
+        );
+
+        function updateChartWithNewData(newData) {
+        // Update the chart data
+        myChart.data.labels.push(...newData.map(() => 'New'));
+        myChart.data.datasets[0].data.push(...newData);
+        myChart.update();
+
+        // Update the chart container width
+        const barLength = myChart.data.labels.length;
+        if (barLength > 7) {
+            const chartWidth = 700 + ((barLength - 7) * 30);
+            box.style.width = `${chartWidth}px`
+        }
+        }
+
     // END First CHART ==============
 
 
@@ -196,6 +220,19 @@
         const chartWidth = 700 + ((barLength - 7) * 30);
         box.style.width = `${chartWidth}px`
     }
+
+
+    const colLarge = document.querySelector('.colLarge');
+
+    colLarge.addEventListener('scroll', (event) => {
+    const scrollPosition = colLarge.scrollLeft + colLarge.clientWidth;
+    const maxScroll = colLarge.scrollWidth;
+
+    if (scrollPosition >= maxScroll) {
+        const newData = generateNewData(7);
+        updateChartWithNewData(newData);
+    }
+    });
 
     // Instantly assign Chart.js version
     const chartVersion = document.getElementById('chartVersion');
