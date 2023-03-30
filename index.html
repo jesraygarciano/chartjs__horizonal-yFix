@@ -270,11 +270,13 @@
       // render init block
       const myChart = new Chart(document.getElementById("myChart"), config);
 
-      function scrollToFirstNewData(newDataCount, removeDataCount) {
+      function scrollToFirstNewData(newDataCount, removeDataCount, rightDataCount = 0) {
         const colLarge = document.querySelector(".colLarge");
         const barWidth = 30;
         const barSpacing = 0;
-        const scrollAmount = (newDataCount - removeDataCount) * (barWidth + barSpacing);
+        const scrollAmount = rightDataCount > 0
+          ? (newDataCount - removeDataCount - rightDataCount) * (barWidth + barSpacing)
+          : (newDataCount - removeDataCount) * (barWidth + barSpacing);
         colLarge.scrollLeft += scrollAmount;
       }
 
@@ -296,7 +298,7 @@
 
         // Scroll to the last newly loaded data when scrolling to the right side
         if (rightDataCount > 0) {
-          scrollToFirstNewData(newData.length - rightDataCount, 0);
+          scrollToFirstNewData(newData.length - rightDataCount, 0, rightDataCount);
         }
 
           // Update the Y-axis max value
@@ -391,21 +393,22 @@
       const colLarge = document.querySelector(".colLarge");
 
       colLarge.addEventListener("scroll", (event) => {
-        const scrollPosition = colLarge.scrollLeft + colLarge.clientWidth;
-        const maxScroll = colLarge.scrollWidth;
-        const rightEndRange = 50;
-        const leftEndRange = 50;
+      const scrollPosition = colLarge.scrollLeft + colLarge.clientWidth;
+      const maxScroll = colLarge.scrollWidth;
+      const rightEndRange = 50;
+      const leftEndRange = 50;
 
-        if (scrollPosition >= maxScroll - rightEndRange) {
-          const newData = generateNewData(30);
-          updateChartWithNewData(newData, 30, 0, 30);
-        }
+      if (scrollPosition >= maxScroll - rightEndRange) {
+        const newData = generateNewData(30);
+        updateChartWithNewData(newData, 30, 0, 30);
+      }
 
-        if (colLarge.scrollLeft <= leftEndRange) {
-          const newData = generateNewData(30);
-          updateChartWithNewData(newData, 0, 30);
-        }
-     });
+      if (colLarge.scrollLeft <= leftEndRange) {
+        const newData = generateNewData(30);
+        updateChartWithNewData(newData, 0, 30);
+      }
+    });
+
 
       //Tooltip event listener
       customTooltip.addEventListener("click", function (event) {
